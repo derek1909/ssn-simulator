@@ -17,7 +17,7 @@ def Euler2fixedpt(dxdt, x_initial, Tmax, dt, xtol=1e-5, xmin=1e-0, Tmin=200, PLO
         Note that one can effectively make the convergence-check purely based on absolute,
         as opposed to relative, change in x, by setting xmin to some very large
         value and inputting a value for 'xtol' equal to xtol_desired/xmin.
-    PLOT: if True, plot the convergence of some component
+    PLOT: if True, plot the convergence of some component (i.e. neurons selected by inds)
     inds: indices of x (state-vector) to plot
     verbose: if True print convergence criteria even if passed (function always prints out a warning if it doesn't converge).
     Tfrac_var: if not zero, maximal temporal CV (coeff. of variation) of state vector components, over the final
@@ -80,7 +80,10 @@ def Euler2fixedpt(dxdt, x_initial, Tmax, dt, xtol=1e-5, xmin=1e-0, Tmin=200, PLO
     if PLOT:
         import matplotlib.pyplot as plt
         plt.figure(244459)
+        print(np.shape(xplot.T))
         plt.plot(np.arange(n+2)*dt, xplot.T, 'o-')
+        # plt.yscale('log')
+
 
     return xvec, CONVG
 

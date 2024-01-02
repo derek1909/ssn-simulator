@@ -40,7 +40,7 @@ class _SSN_Base(object):
 
 
     def powlaw(self, u):
-        return  self.k * np.maximum(0,u)**self.n
+        return self.k * np.maximum(0,u)**self.n
 
 
     def drdt(self, r, inp_vec):
@@ -112,7 +112,7 @@ class _SSN_Base(object):
         drdt = lambda r : self.drdt(r, inp_vec)
         if inp_vec.ndim > 1:
             drdt = lambda r : self.drdt_multi(r, inp_vec)
-        r_fp, CONVG = Euler2fixedpt(drdt, r_init, Tmax, dt, xtol=xtol, PLOT=PLOT, verbose=verbose, silent=silent)
+        r_fp, CONVG = Euler2fixedpt(drdt, r_init, Tmax, dt, xtol=xtol, PLOT=PLOT, verbose=verbose, silent=silent, inds = [0,1])
         if not CONVG and not silent:
             print('Did not reach fixed point.')
         #else:
@@ -381,7 +381,6 @@ class _SSN_AMPAGABA_Base(_SSN_Base):
 
 # ================ N neuron uniform all-2-all models ===========================
 
-
 class SSNUniform(_SSN_Base):
     def __init__(self, n, k, tauE, tauI, Jee, Jei, Jie, Jii,
                                                 Ne, Ni=None, **kwargs):
@@ -475,7 +474,7 @@ class SSNHomogRing(_SSN_Base):
             normalize = lambda vec: vec / np.sum(np.abs(vec))
         else:
             normalize = lambda vec: vec        
-        blk = lambda i, j: toeplitz(normalize(np.exp(-distsq(self.ori_vec_E)/2/s_2x2[i,j]**2) / Ns[j]))
+        blk = lambda i, j: toeplitz(normalize(np.exp(-distsq(self.ori_vec_E)/2/s_2x2[i,j]**2) / Ns[j])) ## so stimulu must at 0? 
         W = np.vstack([np.hstack([J_2x2[i,j] * blk(i,j) for j in range(2)])
                                                         for i in range(2)])
 
@@ -534,8 +533,6 @@ class SSNHomogRing_AMPAGABA(SSNHomogRing, _SSN_AMPAGABA_Base):
 
 
 # ===================== non-period 1D topographic models =======================
-
-
 
 
 # =========================== 2D topographic models ============================
@@ -903,9 +900,5 @@ class SSN2DTopoV1(_SSN_Base):
             (LFPradius**2 > (self.x_vec - xy[0])**2 + (self.y_vec - xy[1])**2)))
 
         return np.asarray(e_LFP).T
-
-
-
-
 class SSN2DTopoV1_AMPAGABA(SSN2DTopoV1, _SSN_AMPAGABA_Base):
     pass
