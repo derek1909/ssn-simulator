@@ -36,7 +36,7 @@ def Euler2fixedpt(dxdt, x_initial, Tmax, dt, xtol=1e-5, xmin=1e-0, Tmin=200, PLO
 
     Nmax = int(np.round(Tmax/dt))
     Nmin = int(np.round(Tmin/dt)) if Tmax > Tmin else int(Nmax/2)
-    xvec = x_initial
+    xvec = x_initial # xvec will be the state vector (not necessarily firing rate)
     CONVG = False
 
     if Tfrac_CV > 0:

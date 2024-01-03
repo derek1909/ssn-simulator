@@ -106,13 +106,13 @@ class _SSN_Base(object):
         return -1j*omega * np.diag(self.tau_x_vec) - DCjacob
 
 
-    def fixed_point_r(self, inp_vec, r_init=None, Tmax=500, dt=1, xtol=1e-5, PLOT=False, verbose=False, silent=False):
+    def fixed_point_r(self, inp_vec, r_init=None, Tmax=500, dt=1, xtol=1e-5, PLOT=False, verbose=False, silent=False, inds=[0]):
         if r_init is None:
             r_init = np.zeros(inp_vec.shape) # np.zeros((self.N,))
         drdt = lambda r : self.drdt(r, inp_vec)
         if inp_vec.ndim > 1:
             drdt = lambda r : self.drdt_multi(r, inp_vec)
-        r_fp, CONVG = Euler2fixedpt(drdt, r_init, Tmax, dt, xtol=xtol, PLOT=PLOT, verbose=verbose, silent=silent, inds = [0,1])
+        r_fp, CONVG = Euler2fixedpt(drdt, r_init, Tmax, dt, xtol=xtol, PLOT=PLOT, verbose=verbose, silent=silent, inds=inds)
         if not CONVG and not silent:
             print('Did not reach fixed point.')
         #else:
@@ -475,8 +475,8 @@ class SSNHomogRing(_SSN_Base):
         else:
             normalize = lambda vec: vec        
         blk = lambda i, j: toeplitz(normalize(np.exp(-distsq(self.ori_vec_E)/2/s_2x2[i,j]**2) / Ns[j])) ## so stimulu must at 0? 
-        W = np.vstack([np.hstack([J_2x2[i,j] * blk(i,j) for j in range(2)])
-                                                        for i in range(2)])
+        W = np.vstack([np.hstack([ (-1)**j * J_2x2[i,j] * blk(i,j)  for j in range(2)])
+                                                                    for i in range(2)])
 
         self.W = W
         self.L1normalize = L1normalize
@@ -484,6 +484,13 @@ class SSNHomogRing(_SSN_Base):
         self.s_2x2 = s_2x2
         self.distsq = distsq
         self.dist = dist
+
+        # print('J_2x2:', J_2x2)
+        # import matplotlib.pyplot as plt
+        # plt.figure()
+        # plt.imshow(W, cmap='viridis', interpolation='nearest', )        
+        # cbar = plt.colorbar()
+
 
         return self.W
 
