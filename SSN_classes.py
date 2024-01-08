@@ -671,7 +671,7 @@ class SSN2DTopoV1(_SSN_Base):
         return self.x_map, self.y_map
 
 
-    def _make_orimap(self, hyper_col=None, nn=30, X=None, Y=None):
+    def _make_orimap(self, hyper_col=None, nn=100, X=None, Y=None):
         '''
         Makes the orientation map for the grid, by superposition of plane-waves.
         hyper_col = hyper column length for the network in retinotopic degrees
